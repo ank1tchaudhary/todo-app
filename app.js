@@ -6,10 +6,14 @@ const mongo = require("mongoose");
 const { default: mongoose } = require("mongoose");
 mongo.connect("mongodb://127.0.0.1:27017/TodoApp");
 
+const itemsSchema = {
+  name: String
+};
+const Item = mongoose.model("Item", itemsSchema);
 
 const listSchema = {
   name : String,
-  items : []
+  items : [itemsSchema]
 };
 
 const List = mongo.model("List",listSchema);
@@ -51,14 +55,13 @@ app.post("/", function(req, res){
 
   const itemData = req.body.newItem;
 
-  const list = new List({
-    name : req.body.list,
-    items : [itemData]
+  const item = new Item({
+    name: itemData
   });
 
   List.findOne({name : req.body.list},(err,listData) => {
     if(!err){
-      listData.items.push(itemData);
+      listData.items.push(item);
       listData.save();
       res.redirect("/"+req.body.list);
   }
@@ -70,15 +73,9 @@ app.post("/delete",(req,res)=>{
  let data = req.body.check.split("@");
  console.log("Data : ",data);
 
-List.findOne({name : data[1]},(err,listData) => {
+List.findOneAndUpdate({name : data[1]},{$pull: {items: {_id: data[0]}}},(err,listData) => {
   if(!err){
-    if(listData){
-    
-      listData.items.pop(data[0]);
-      listData.save();
-    
     res.redirect("/"+data[1]);
-  }
   }
 })
 });
