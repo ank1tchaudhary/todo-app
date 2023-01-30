@@ -5,3 +5,4 @@
 
 * npm install
 * nodemon app.js
+* Type in URL : http://localhost:3000
