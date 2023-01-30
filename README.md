@@ -4,5 +4,6 @@
 
 
 ##Commands : 
-  ###npm install
-  ###nodemon app.js
+
+##npm install
+##nodemon app.js
